@@ -1,0 +1,831 @@
+diff --git a/board/microchip/sam9x60_hobby/genimage.cfg b/board/microchip/sam9x60_hobby/genimage.cfg
+new file mode 100644
+index 0000000..b48a4fd
+--- /dev/null
++++ b/board/microchip/sam9x60_hobby/genimage.cfg
+@@ -0,0 +1,38 @@
++# Image for SD card boot on Microchip SAM9X60-CURIOSITY board
++#
++image boot.vfat {
++	vfat {
++		files = {
++			"sam9x60_curiosity.itb",
++			"boot.bin",
++			"u-boot.bin"
++		}
++
++		file uboot.env {
++			image = "uboot-env.bin"
++		}
++	}
++	size = 16M
++}
++
++image sdcard.img {
++	hdimage {
++	}
++
++	partition boot {
++		partition-type = 0xC
++		bootable = "true"
++		image = "boot.vfat"
++		offset = 1M
++	}
++
++	partition rootfs {
++		partition-type = 0x83
++		image = "rootfs.ext4"
++	}
++	
++	partition user {
++		partition-type = 0xC
++		size = 16384M
++	}
++}
+diff --git a/board/microchip/sam9x60_hobby/linux.config b/board/microchip/sam9x60_hobby/linux.config
+new file mode 100644
+index 0000000..8d04cae
+--- /dev/null
++++ b/board/microchip/sam9x60_hobby/linux.config
+@@ -0,0 +1,266 @@
++# CONFIG_SWAP is not set
++CONFIG_SYSVIPC=y
++CONFIG_NO_HZ_IDLE=y
++CONFIG_HIGH_RES_TIMERS=y
++CONFIG_LOG_BUF_SHIFT=16
++CONFIG_CGROUPS=y
++CONFIG_CGROUP_CPUACCT=y
++CONFIG_BLK_DEV_INITRD=y
++CONFIG_EMBEDDED=y
++CONFIG_SLAB=y
++CONFIG_ARCH_MULTI_V4T=y
++CONFIG_ARCH_MULTI_V5=y
++# CONFIG_ARCH_MULTI_V7 is not set
++CONFIG_ARCH_AT91=y
++CONFIG_SOC_AT91RM9200=y
++CONFIG_SOC_AT91SAM9=y
++CONFIG_SOC_SAM9X60=y
++# CONFIG_ATMEL_CLOCKSOURCE_PIT is not set
++CONFIG_AEABI=y
++CONFIG_UACCESS_WITH_MEMCPY=y
++# CONFIG_ATAGS is not set
++CONFIG_CMDLINE="console=ttyS0,115200 initrd=0x21100000,25165824 root=/dev/ram0 rw"
++CONFIG_KEXEC=y
++CONFIG_CPU_IDLE=y
++# CONFIG_ARM_AT91_CPUIDLE is not set
++CONFIG_PM_DEBUG=y
++CONFIG_PM_ADVANCED_DEBUG=y
++CONFIG_MODULES=y
++CONFIG_MODULE_UNLOAD=y
++# CONFIG_BLK_DEV_BSG is not set
++# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
++CONFIG_NET=y
++CONFIG_PACKET=y
++CONFIG_UNIX=y
++CONFIG_INET=y
++CONFIG_IP_MULTICAST=y
++CONFIG_IP_PNP=y
++CONFIG_IP_PNP_DHCP=y
++# CONFIG_INET_DIAG is not set
++CONFIG_IPV6_SIT_6RD=y
++CONFIG_CAN=y
++CONFIG_CAN_AT91=y
++CONFIG_BT=y
++CONFIG_BT_RFCOMM=y
++CONFIG_BT_RFCOMM_TTY=y
++CONFIG_BT_BNEP=y
++CONFIG_BT_BNEP_MC_FILTER=y
++CONFIG_BT_BNEP_PROTO_FILTER=y
++CONFIG_BT_HIDP=y
++CONFIG_BT_HCIBTUSB=y
++CONFIG_BT_HCIUART=y
++CONFIG_BT_HCIUART_H4=y
++CONFIG_BT_HCIUART_3WIRE=y
++CONFIG_BT_HCIVHCI=y
++CONFIG_CFG80211=m
++# CONFIG_CFG80211_DEFAULT_PS is not set
++CONFIG_CFG80211_DEBUGFS=y
++CONFIG_CFG80211_WEXT=y
++CONFIG_MAC80211=m
++CONFIG_RFKILL=y
++CONFIG_RFKILL_INPUT=y
++CONFIG_DEVTMPFS=y
++CONFIG_DEVTMPFS_MOUNT=y
++# CONFIG_STANDALONE is not set
++# CONFIG_PREVENT_FIRMWARE_BUILD is not set
++CONFIG_MTD=y
++CONFIG_MTD_TESTS=m
++CONFIG_MTD_CMDLINE_PARTS=y
++CONFIG_MTD_CFI=y
++CONFIG_MTD_DATAFLASH=y
++CONFIG_MTD_RAW_NAND=y
++CONFIG_MTD_NAND_ATMEL=y
++CONFIG_MTD_SPI_NOR=y
++CONFIG_MTD_UBI=y
++CONFIG_MTD_UBI_FASTMAP=y
++CONFIG_MTD_UBI_BLOCK=y
++CONFIG_BLK_DEV_LOOP=y
++CONFIG_BLK_DEV_RAM=y
++CONFIG_BLK_DEV_RAM_COUNT=4
++CONFIG_BLK_DEV_RAM_SIZE=8192
++CONFIG_ATMEL_SSC=y
++CONFIG_EEPROM_AT24=y
++CONFIG_SCSI=y
++CONFIG_BLK_DEV_SD=y
++# CONFIG_SCSI_LOWLEVEL is not set
++CONFIG_NETDEVICES=y
++# CONFIG_NET_VENDOR_BROADCOM is not set
++CONFIG_MACB=y
++CONFIG_DM9000=y
++# CONFIG_NET_VENDOR_FARADAY is not set
++# CONFIG_NET_VENDOR_INTEL is not set
++# CONFIG_NET_VENDOR_MARVELL is not set
++# CONFIG_NET_VENDOR_MICREL is not set
++# CONFIG_NET_VENDOR_NATSEMI is not set
++# CONFIG_NET_VENDOR_SEEQ is not set
++# CONFIG_NET_VENDOR_SMSC is not set
++# CONFIG_NET_VENDOR_STMICRO is not set
++CONFIG_DAVICOM_PHY=y
++CONFIG_MICREL_PHY=y
++CONFIG_MWIFIEX=m
++CONFIG_MWIFIEX_SDIO=m
++CONFIG_MWIFIEX_USB=m
++CONFIG_WILC_SDIO=m
++CONFIG_WILC_SPI=m
++CONFIG_RT2X00=m
++CONFIG_RT2500USB=m
++CONFIG_RT73USB=m
++CONFIG_RT2800USB=m
++CONFIG_RT2800USB_RT53XX=y
++CONFIG_RT2800USB_RT55XX=y
++CONFIG_RT2800USB_UNKNOWN=y
++CONFIG_RTL8187=m
++CONFIG_INPUT_POLLDEV=y
++CONFIG_INPUT_JOYDEV=y
++CONFIG_INPUT_EVDEV=y
++# CONFIG_KEYBOARD_ATKBD is not set
++CONFIG_KEYBOARD_QT1070=y
++CONFIG_KEYBOARD_GPIO=y
++# CONFIG_INPUT_MOUSE is not set
++CONFIG_INPUT_TOUCHSCREEN=y
++CONFIG_TOUCHSCREEN_ADS7846=m
++CONFIG_TOUCHSCREEN_ATMEL_MXT=y
++# CONFIG_SERIO is not set
++CONFIG_LEGACY_PTY_COUNT=4
++CONFIG_SERIAL_ATMEL=y
++CONFIG_SERIAL_ATMEL_CONSOLE=y
++CONFIG_SERIAL_DEV_BUS=y
++CONFIG_HW_RANDOM=y
++CONFIG_I2C_CHARDEV=y
++CONFIG_I2C_AT91=y
++CONFIG_I2C_GPIO=y
++CONFIG_SPI=y
++CONFIG_SPI_ATMEL=y
++CONFIG_SPI_ATMEL_QUADSPI=y
++CONFIG_SPI_GPIO=y
++CONFIG_SPI_SPIDEV=m
++CONFIG_PINCTRL_MCP23S08=m
++CONFIG_GPIO_SYSFS=y
++CONFIG_GPIO_PCA953X=m
++CONFIG_POWER_RESET=y
++CONFIG_POWER_SUPPLY=y
++CONFIG_HWMON=m
++CONFIG_SENSORS_LM75=m
++CONFIG_WATCHDOG=y
++CONFIG_AT91SAM9X_WATCHDOG=y
++CONFIG_SAMA5D4_WATCHDOG=y
++CONFIG_MFD_ATMEL_FLEXCOM=y
++CONFIG_MFD_ATMEL_HLCDC=y
++CONFIG_REGULATOR=y
++CONFIG_REGULATOR_FIXED_VOLTAGE=y
++CONFIG_MEDIA_SUPPORT=y
++CONFIG_MEDIA_SUPPORT_FILTER=y
++# CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
++CONFIG_MEDIA_CAMERA_SUPPORT=y
++CONFIG_MEDIA_PLATFORM_SUPPORT=y
++CONFIG_MEDIA_USB_SUPPORT=y
++CONFIG_USB_VIDEO_CLASS=m
++CONFIG_V4L_PLATFORM_DRIVERS=y
++CONFIG_VIDEO_ATMEL_ISI=y
++CONFIG_VIDEO_OV2640=m
++CONFIG_VIDEO_OV7740=m
++CONFIG_VIDEO_MT9V032=m
++CONFIG_DRM=y
++CONFIG_DRM_ATMEL_HLCDC=y
++CONFIG_DRM_PANEL_SIMPLE=y
++CONFIG_FB_ATMEL=y
++CONFIG_BACKLIGHT_ATMEL_LCDC=y
++CONFIG_BACKLIGHT_CLASS_DEVICE=y
++CONFIG_BACKLIGHT_PWM=y
++CONFIG_SOUND=y
++CONFIG_SND=y
++CONFIG_SND_USB_AUDIO=y
++CONFIG_SND_SOC=y
++CONFIG_SND_ATMEL_SOC=y
++CONFIG_SND_AT91_SOC_SAM9G20_WM8731=y
++CONFIG_SND_ATMEL_SOC_WM8904=y
++CONFIG_SND_AT91_SOC_SAM9X5_WM8731=y
++CONFIG_SND_ATMEL_SOC_CLASSD=y
++CONFIG_SND_SOC_MIKROE_PROTO=m
++CONFIG_SND_MCHP_SOC_I2S_MCC=y
++CONFIG_USB=y
++CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
++CONFIG_USB_EHCI_HCD=y
++CONFIG_USB_OHCI_HCD=y
++CONFIG_USB_ACM=y
++CONFIG_USB_STORAGE=y
++CONFIG_USB_SERIAL=y
++CONFIG_USB_SERIAL_GENERIC=y
++CONFIG_USB_SERIAL_FTDI_SIO=y
++CONFIG_USB_SERIAL_PL2303=y
++CONFIG_USB_GADGET=y
++CONFIG_USB_ATMEL_USBA=m
++CONFIG_USB_CONFIGFS=m
++CONFIG_USB_CONFIGFS_ACM=y
++CONFIG_USB_CONFIGFS_RNDIS=y
++CONFIG_USB_CONFIGFS_MASS_STORAGE=y
++CONFIG_USB_ZERO=m
++CONFIG_USB_ETH=m
++CONFIG_USB_MASS_STORAGE=m
++CONFIG_USB_G_SERIAL=m
++CONFIG_MMC=y
++CONFIG_PWRSEQ_SD8787=m
++CONFIG_MMC_SDHCI=y
++CONFIG_MMC_SDHCI_PLTFM=y
++CONFIG_MMC_SDHCI_OF_AT91=y
++CONFIG_MMC_ATMELMCI=y
++CONFIG_MMC_SPI=y
++CONFIG_NEW_LEDS=y
++CONFIG_LEDS_CLASS=y
++CONFIG_LEDS_GPIO=y
++CONFIG_LEDS_PWM=y
++CONFIG_LEDS_TRIGGERS=y
++CONFIG_LEDS_TRIGGER_TIMER=y
++CONFIG_LEDS_TRIGGER_HEARTBEAT=y
++CONFIG_LEDS_TRIGGER_CPU=y
++CONFIG_LEDS_TRIGGER_GPIO=y
++CONFIG_RTC_CLASS=y
++CONFIG_RTC_DRV_AT91RM9200=y
++CONFIG_RTC_DRV_AT91SAM9=y
++CONFIG_DMADEVICES=y
++CONFIG_AT_HDMAC=y
++CONFIG_AT_XDMAC=y
++CONFIG_MICROCHIP_PIT64B=y
++# CONFIG_IOMMU_SUPPORT is not set
++CONFIG_IIO=y
++CONFIG_AT91_ADC=y
++CONFIG_AT91_SAMA5D2_ADC=y
++CONFIG_PWM=y
++CONFIG_PWM_ATMEL=y
++CONFIG_PWM_ATMEL_HLCDC_PWM=y
++CONFIG_PWM_ATMEL_TCB=y
++CONFIG_EXT4_FS=y
++CONFIG_FANOTIFY=y
++CONFIG_VFAT_FS=y
++CONFIG_TMPFS=y
++CONFIG_CONFIGFS_FS=y
++CONFIG_UBIFS_FS=y
++CONFIG_UBIFS_FS_ADVANCED_COMPR=y
++CONFIG_NFS_FS=y
++CONFIG_ROOT_NFS=y
++CONFIG_NLS_CODEPAGE_437=y
++CONFIG_NLS_CODEPAGE_850=y
++CONFIG_NLS_ISO8859_1=y
++CONFIG_NLS_UTF8=y
++CONFIG_CRYPTO_CCM=y
++CONFIG_CRYPTO_GCM=y
++CONFIG_CRYPTO_CBC=y
++CONFIG_CRYPTO_CFB=y
++CONFIG_CRYPTO_OFB=y
++CONFIG_CRYPTO_XTS=y
++CONFIG_CRYPTO_HMAC=y
++CONFIG_CRYPTO_SHA1=y
++CONFIG_CRYPTO_SHA512=y
++CONFIG_CRYPTO_ARC4=y
++CONFIG_CRYPTO_DES=y
++CONFIG_CRYPTO_USER_API_HASH=m
++CONFIG_CRYPTO_USER_API_SKCIPHER=m
++CONFIG_CRYPTO_DEV_ATMEL_AES=y
++CONFIG_CRYPTO_DEV_ATMEL_TDES=y
++CONFIG_CRYPTO_DEV_ATMEL_SHA=y
++CONFIG_CRC_CCITT=y
++CONFIG_STRIP_ASM_SYMS=y
++CONFIG_DEBUG_FS=y
++# CONFIG_SCHED_DEBUG is not set
++# CONFIG_FTRACE is not set
++CONFIG_DEBUG_USER=y
+diff --git a/board/microchip/sam9x60_hobby/uboot-env.txt b/board/microchip/sam9x60_hobby/uboot-env.txt
+new file mode 100644
+index 0000000..d9f76a7
+--- /dev/null
++++ b/board/microchip/sam9x60_hobby/uboot-env.txt
+@@ -0,0 +1,25 @@
++at91_pda_detect=run pda4300test; run pda7000test; run pda7000btest; run pda5000test; run pda4301test; run pda4301btest;
++at91_prepare_bootargs=test -n $display_var && setenv bootargs ${bootargs} ${at91_video_bootargs}
++at91_prepare_overlays_config=test -n $display_var && setenv at91_overlays_config '#'${display_var}
++at91_prepare_video_bootargs=test -n $display_var && setenv at91_video_bootargs video=${video_mode}
++at91_set_display=test -n $pda && setenv display $pda
++video=${video_mode}
++board_name=sam9x60_curiosity
++bootargs=console=ttyS0,115200 root=/dev/mmcblk0p2 rw rootwait rootfstype=ext4 atmel.pm_modes=standby,ulp0
++bootcmd=run at91_set_display; run at91_pda_detect; run at91_prepare_video_bootargs; run at91_prepare_bootargs; run at91_prepare_overlays_config; run bootcmd_boot;
++bootcmd_boot=fatload mmc 0:1 ${loadaddr} ${board_name}.itb; bootm ${loadaddr}#kernel_dtb#wilc${at91_overlays_config};
++bootdelay=1
++loadaddr=0x21000000
++pda4300test=test -n $display && test $display = 4300 && setenv display_var 'pda4' && setenv video_mode ${video_mode_pda4}
++pda4301test=test -n $display && test $display = 4301 && setenv display_var 'pda4' && setenv video_mode ${video_mode_pda4}
++pda4301btest=test -n $display && test $display = 4301B && setenv display_var 'pda4' && setenv video_mode ${video_mode_pda4}
++pda5000test=test -n $display && test $display = 5000 && setenv display_var 'pda5' && setenv video_mode ${video_mode_pda5}
++pda7000btest=test -n $display && test $display = 7000B && setenv display_var 'pda7b' && setenv video_mode ${video_mode_pda7b}
++pda7000test=test -n $display && test $display = 7000 && setenv display_var 'pda7' && setenv video_mode ${video_mode_pda7}
++stderr=serial@ffffee00
++stdin=serial@ffffee00
++stdout=serial@ffffee00
++video_mode_pda4=Unknown-1:480x272-16
++video_mode_pda5=Unknown-1:800x480-16
++video_mode_pda7=Unknown-1:800x480-16
++video_mode_pda7b=Unknown-1:800x480-16
+diff --git a/board/microchip/sama5/fs-overlay/etc/init.d/S99test b/board/microchip/sama5/fs-overlay/etc/init.d/S99test
+new file mode 100755
+index 0000000..036f9f8
+--- /dev/null
++++ b/board/microchip/sama5/fs-overlay/etc/init.d/S99test
+@@ -0,0 +1,30 @@
++#!/bin/sh
++
++start()
++{
++	cd /root
++	./key_test &
++}
++
++stop()
++{
++	killall key_test
++}
++
++case "$1" in
++	start)
++		start
++		;;
++	stop)
++		stop
++		;;
++	restart)
++		stop
++		start
++		;;
++	*)
++		;;
++		
++esac
++
++
+diff --git a/board/microchip/sama5/fs-overlay/root/key_test b/board/microchip/sama5/fs-overlay/root/key_test
+new file mode 100755
+index 0000000000000000000000000000000000000000..7ba60e348fdf00cb16817d77915b91c3d0aab00b
+GIT binary patch
+literal 13244
+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
+
+literal 0
+HcmV?d00001
+
+diff --git a/board/microchip/sama5/fs-overlay/root/start_wilc.sh b/board/microchip/sama5/fs-overlay/root/start_wilc.sh
+new file mode 100755
+index 0000000..25ed8ec
+--- /dev/null
++++ b/board/microchip/sama5/fs-overlay/root/start_wilc.sh
+@@ -0,0 +1,5 @@
++modprobe wilc-sdio
++ifconfig wlan0 up
++wpa_supplicant -Dnl80211 -iwlan0 -c/etc/wpa_supplicant.conf &
++udhcpc -i wlan0 &
++
+diff --git a/configs/sam9x60_hobby_graphics_defconfig b/configs/sam9x60_hobby_graphics_defconfig
+new file mode 100644
+index 0000000..eeb1c23
+--- /dev/null
++++ b/configs/sam9x60_hobby_graphics_defconfig
+@@ -0,0 +1,232 @@
++BR2_arm=y
++BR2_OPTIMIZE_FAST=y
++BR2_GLOBAL_PATCH_DIR="$(BR2_EXTERNAL_MCHP_PATH)/patches"
++BR2_TOOLCHAIN_BUILDROOT_GLIBC=y
++BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_15=y
++BR2_TOOLCHAIN_BUILDROOT_CXX=y
++BR2_PACKAGE_HOST_GDB=y
++BR2_PACKAGE_HOST_GDB_TUI=y
++BR2_PACKAGE_HOST_GDB_PYTHON3=y
++BR2_PACKAGE_HOST_GDB_SIM=y
++BR2_TARGET_GENERIC_HOSTNAME="sam9x60_hobby"
++BR2_TARGET_GENERIC_ISSUE="Welcome to the Microchip SAM9X60 HOBBY Demo"
++BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_EUDEV=y
++BR2_SYSTEM_DHCP="eth0"
++# BR2_ENABLE_LOCALE_PURGE is not set
++BR2_GENERATE_LOCALE="en_US es_ES zh_CN hi_IN fr_FR de_DE"
++BR2_SYSTEM_ENABLE_NLS=y
++BR2_ROOTFS_OVERLAY="$(BR2_EXTERNAL_MCHP_PATH)/board/microchip/sama5/fs-overlay/"
++BR2_ROOTFS_POST_IMAGE_SCRIPT="support/scripts/genimage.sh"
++BR2_ROOTFS_POST_SCRIPT_ARGS="-c $(BR2_EXTERNAL_MCHP_PATH)/board/microchip/sam9x60_hobby/genimage.cfg"
++BR2_LINUX_KERNEL=y
++BR2_LINUX_KERNEL_CUSTOM_TARBALL=y
++BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION="$(call github,linux4microchip,linux,linux4microchip+sam9x60-curiosity-2022.07)/linux-linux4microchip+sam9x60-curiosity-2022.07.tar.gz"
++BR2_LINUX_KERNEL_USE_CUSTOM_CONFIG=y
++BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE="$(BR2_EXTERNAL_MCHP_PATH)/board/microchip/sam9x60_hobby/linux.config"
++BR2_LINUX_KERNEL_DTS_SUPPORT=y
++BR2_LINUX_KERNEL_INTREE_DTS_NAME="at91-sam9x60_curiosity"
++BR2_PACKAGE_LINUX_TOOLS_IIO=y
++BR2_PACKAGE_ALSA_UTILS=y
++BR2_PACKAGE_ALSA_UTILS_ALSACONF=y
++BR2_PACKAGE_ALSA_UTILS_AMIXER=y
++BR2_PACKAGE_ALSA_UTILS_APLAY=y
++BR2_PACKAGE_ALSA_UTILS_SPEAKER_TEST=y
++BR2_PACKAGE_FFMPEG_GPL=y
++BR2_PACKAGE_FFMPEG_NONFREE=y
++BR2_PACKAGE_FFMPEG_ENCODERS="jpeg mjpeg png mpeg4"
++BR2_PACKAGE_FFMPEG_DECODERS="mpeg1 mpeg2 mpeg4 vp6 vp8 vp9 h264 h263 jpeg mjpeg aac vorbis mp3 rawvideo"
++BR2_PACKAGE_FFMPEG_MUXERS="avi mv4 h263 h264 mp4 mp3 mp2 mov mpjeg mpeg2video mpegts image2"
++BR2_PACKAGE_FFMPEG_DEMUXERS="avi matroska mpegts mjpeg mp3 mov mpegps mpegvideo aac h263 h264 m4v"
++BR2_PACKAGE_FFMPEG_PARSERS="h263 h264 mjpeg mpeg4video mpegvideo mpegaudio vp8 vp9 jpeg aac vorbis"
++BR2_PACKAGE_FFMPEG_BSFS=""
++BR2_PACKAGE_FFMPEG_PROTOCOLS="file"
++BR2_PACKAGE_FFMPEG_FILTERS="scale"
++BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_ADDER=y
++BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_AUDIOMIXER=y
++BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_AUDIORATE=y
++BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_AUDIOTESTSRC=y
++BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_ENCODING=y
++BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_GIO=y
++BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_RAWPARSE=y
++BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VIDEOTESTSRC=y
++BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VORBIS=y
++BR2_PACKAGE_GST1_PLUGINS_GOOD_JPEG=y
++BR2_PACKAGE_GST1_PLUGINS_GOOD_PNG=y
++BR2_PACKAGE_GST1_PLUGINS_GOOD_BZ2=y
++BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_AUDIOPARSERS=y
++BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_AUTODETECT=y
++BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_ID3DEMUX=y
++BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_MATROSKA=y
++BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_RTP=y
++BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_RTPMANAGER=y
++BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_RTSP=y
++BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_UDP=y
++BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_V4L2=y
++BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_V4L2_PROBE=y
++BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_SOUPHTTPSRC=y
++BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_VPX=y
++BR2_PACKAGE_GST1_PLUGINS_BAD=y
++BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_AUTOCONVERT=y
++BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_MPEGDEMUX=y
++BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_MPEGTSDEMUX=y
++BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_VIDEOPARSERS=y
++BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_FBDEV=y
++BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_KMS=y
++BR2_PACKAGE_GST1_PLUGINS_UGLY=y
++BR2_PACKAGE_GST1_PLUGINS_UGLY_PLUGIN_MPEG2DEC=y
++BR2_PACKAGE_MPG123=y
++BR2_PACKAGE_V4L2GRAB=y
++BR2_PACKAGE_V4L2LOOPBACK=y
++BR2_PACKAGE_V4L2LOOPBACK_UTILS=y
++BR2_PACKAGE_COREMARK=y
++BR2_PACKAGE_DHRYSTONE=y
++BR2_PACKAGE_GDB=y
++BR2_PACKAGE_GDB_SERVER=y
++BR2_PACKAGE_GDB_DEBUGGER=y
++BR2_PACKAGE_LMBENCH=y
++BR2_PACKAGE_STRACE=y
++BR2_PACKAGE_TINYMEMBENCH=y
++BR2_PACKAGE_TRACE_CMD=y
++BR2_PACKAGE_WHETSTONE=y
++BR2_PACKAGE_GREP=y
++BR2_PACKAGE_TREE=y
++BR2_PACKAGE_DOSFSTOOLS=y
++BR2_PACKAGE_DOSFSTOOLS_FATLABEL=y
++BR2_PACKAGE_DOSFSTOOLS_FSCK_FAT=y
++BR2_PACKAGE_DOSFSTOOLS_MKFS_FAT=y
++BR2_PACKAGE_MTD=y
++BR2_PACKAGE_BITSTREAM_VERA=y
++BR2_PACKAGE_DEJAVU=y
++BR2_PACKAGE_LIBERATION=y
++BR2_PACKAGE_FSWEBCAM=y
++BR2_PACKAGE_FB_TEST_APP=y
++BR2_PACKAGE_I2C_TOOLS=y
++BR2_PACKAGE_RNG_TOOLS=y
++# BR2_PACKAGE_RNG_TOOLS_JITTERENTROPY_LIBRARY is not set
++BR2_PACKAGE_SETSERIAL=y
++BR2_PACKAGE_SPI_TOOLS=y
++BR2_PACKAGE_USBUTILS=y
++BR2_PACKAGE_PYTHON3=y
++BR2_PACKAGE_PYTHON3_PY_PYC=y
++BR2_PACKAGE_PYTHON3_CURSES=y
++BR2_PACKAGE_PYTHON3_READLINE=y
++BR2_PACKAGE_PYTHON3_SSL=y
++BR2_PACKAGE_PYTHON_SETUPTOOLS=y
++BR2_PACKAGE_CA_CERTIFICATES=y
++BR2_PACKAGE_LEVELDB=y
++BR2_PACKAGE_CAIRO_SCRIPT=y
++BR2_PACKAGE_CAIRO_TEE=y
++BR2_PACKAGE_CAIRO_XML=y
++BR2_PACKAGE_LIBDRM_INSTALL_TESTS=y
++BR2_PACKAGE_LIBRSVG=y
++BR2_PACKAGE_LIBGPIOD=y
++BR2_PACKAGE_LIBGPIOD_TOOLS=y
++BR2_PACKAGE_LIBGUDEV=y
++BR2_PACKAGE_LIBINPUT=y
++BR2_PACKAGE_LIBV4L_UTILS=y
++BR2_PACKAGE_JSON_C=y
++BR2_PACKAGE_JSONCPP=y
++BR2_PACKAGE_LIBXMLPP=y
++BR2_PACKAGE_GLIB_NETWORKING=y
++BR2_PACKAGE_LIBCURL=y
++BR2_PACKAGE_LIBCURL_CURL=y
++BR2_PACKAGE_PCRE_16=y
++BR2_PACKAGE_SHARED_MIME_INFO=y
++BR2_PACKAGE_XUTIL_UTIL_MACROS=y
++BR2_PACKAGE_BLUEZ5_UTILS=y
++BR2_PACKAGE_BLUEZ5_UTILS_CLIENT=y
++BR2_PACKAGE_BLUEZ5_UTILS_TOOLS=y
++BR2_PACKAGE_BLUEZ5_UTILS_DEPRECATED=y
++BR2_PACKAGE_BLUEZ5_UTILS_EXPERIMENTAL=y
++BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HEALTH=y
++BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_MIDI=y
++BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_NFC=y
++BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_SAP=y
++BR2_PACKAGE_BLUEZ5_UTILS_TEST=y
++BR2_PACKAGE_BRIDGE_UTILS=y
++BR2_PACKAGE_CAN_UTILS=y
++BR2_PACKAGE_CRDA=y
++BR2_PACKAGE_DHCP=y
++BR2_PACKAGE_DHCP_SERVER=y
++BR2_PACKAGE_DHCP_SERVER_DELAYED_ACK=y
++BR2_PACKAGE_DHCP_RELAY=y
++BR2_PACKAGE_DHCPCD=y
++BR2_PACKAGE_DROPBEAR=y
++BR2_PACKAGE_DROPBEAR_DISABLE_REVERSEDNS=y
++BR2_PACKAGE_ETHTOOL=y
++BR2_PACKAGE_HOSTAPD=y
++BR2_PACKAGE_HOSTAPD_EAP=y
++BR2_PACKAGE_HOSTAPD_WPS=y
++BR2_PACKAGE_IFUPDOWN=y
++BR2_PACKAGE_IPERF3=y
++BR2_PACKAGE_IPROUTE2=y
++BR2_PACKAGE_IPTABLES=y
++BR2_PACKAGE_IW=y
++BR2_PACKAGE_LRZSZ=y
++BR2_PACKAGE_MII_DIAG=y
++BR2_PACKAGE_NET_TOOLS=y
++BR2_PACKAGE_NETCAT_OPENBSD=y
++BR2_PACKAGE_NFTABLES=y
++BR2_PACKAGE_OPENSSH=y
++BR2_PACKAGE_PHYTOOL=y
++BR2_PACKAGE_RADVD=y
++BR2_PACKAGE_RSYNC=y
++BR2_PACKAGE_TCPDUMP=y
++BR2_PACKAGE_TRACEROUTE=y
++BR2_PACKAGE_WGET=y
++BR2_PACKAGE_WIRELESS_TOOLS=y
++BR2_PACKAGE_WPA_SUPPLICANT=y
++BR2_PACKAGE_WPA_SUPPLICANT_AP_SUPPORT=y
++BR2_PACKAGE_WPA_SUPPLICANT_AUTOSCAN=y
++BR2_PACKAGE_WPA_SUPPLICANT_EAP=y
++BR2_PACKAGE_WPA_SUPPLICANT_DEBUG_SYSLOG=y
++BR2_PACKAGE_WPA_SUPPLICANT_WPS=y
++BR2_PACKAGE_WPA_SUPPLICANT_CLI=y
++BR2_PACKAGE_FILE=y
++BR2_PACKAGE_TIME=y
++BR2_PACKAGE_WHICH=y
++BR2_PACKAGE_UTIL_LINUX_BINARIES=y
++BR2_PACKAGE_NANO=y
++BR2_PACKAGE_VIM=y
++BR2_TARGET_ROOTFS_EXT2=y
++BR2_TARGET_ROOTFS_EXT2_4=y
++BR2_TARGET_ROOTFS_EXT2_LABEL="ROOTFS"
++BR2_TARGET_ROOTFS_EXT2_SIZE="900m"
++BR2_TARGET_ROOTFS_EXT2_MKFS_OPTIONS="-O 64bit"
++BR2_TARGET_AT91BOOTSTRAP3=y
++BR2_TARGET_AT91BOOTSTRAP3_CUSTOM_GIT=y
++BR2_TARGET_AT91BOOTSTRAP3_CUSTOM_REPO_URL="https://github.com/linux4sam/at91bootstrap"
++BR2_TARGET_AT91BOOTSTRAP3_CUSTOM_REPO_VERSION="v4.0.4"
++BR2_TARGET_AT91BOOTSTRAP3_DEFCONFIG="sam9x60_curiositysd_uboot"
++BR2_TARGET_UBOOT=y
++BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG=y
++BR2_TARGET_UBOOT_CUSTOM_GIT=y
++BR2_TARGET_UBOOT_CUSTOM_REPO_URL="https://github.com/linux4sam/u-boot-at91"
++BR2_TARGET_UBOOT_CUSTOM_REPO_VERSION="sam9x60-curiosity-2022.07"
++BR2_TARGET_UBOOT_BOARD_DEFCONFIG="sam9x60_curiosity_mmc"
++BR2_TARGET_UBOOT_NEEDS_DTC=y
++BR2_PACKAGE_HOST_DOSFSTOOLS=y
++BR2_PACKAGE_HOST_GENIMAGE=y
++BR2_PACKAGE_HOST_MTOOLS=y
++BR2_PACKAGE_HOST_UBOOT_TOOLS=y
++BR2_PACKAGE_HOST_UBOOT_TOOLS_FIT_SUPPORT=y
++BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE=y
++BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SOURCE="$(BR2_EXTERNAL_MCHP_PATH)/board/microchip/sam9x60_hobby/uboot-env.txt"
++BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SIZE="0x4000"
++BR2_PACKAGE_DT_OVERLAY_MCHP=y
++BR2_PACKAGE_DT_OVERLAY_MCHP_PLATFORM="sam9x60_curiosity"
++BR2_PACKAGE_LIBM2D=y
++BR2_PACKAGE_LIBPLANES=y
++BR2_PACKAGE_PYTHON_MPIO=y
++BR2_PACKAGE_WILC_FIRMWARE=y
++BR2_PACKAGE_EGT_BENCHMARK=y
++BR2_PACKAGE_EGT_LAUNCHER=y
++BR2_PACKAGE_EGT_THERMOSTAT=y
++BR2_PACKAGE_EGT_SAMPLES=y
++BR2_PACKAGE_EGT_SAMPLES_CONTRIBUTION=y
++BR2_PACKAGE_EGT_MEDIA=y
++BR2_PACKAGE_NOTO_FONTS=y
++BR2_PACKAGE_NOTO_FONTS_FONTS="NotoSans-Regular.ttf NotoSansCJKsc-Regular.otf NotoColorEmoji.ttf"
++BR2_PACKAGE_LOHIT_FONTS=y
++BR2_PACKAGE_LOHIT_FONTS_FONTS="devanagari"
++BR2_PACKAGE_EGT_LAUNCHER_INIT=y
+diff --git a/patches/dt-overlay-mchp/0001_sam9x60_hobby_dtoverlay.patch b/patches/dt-overlay-mchp/0001_sam9x60_hobby_dtoverlay.patch
+new file mode 100644
+index 0000000..88f1894
+--- /dev/null
++++ b/patches/dt-overlay-mchp/0001_sam9x60_hobby_dtoverlay.patch
+@@ -0,0 +1,31 @@
++diff --git a/sam9x60_curiosity/sam9x60_curiosity_wilc3000.dtso b/sam9x60_curiosity/sam9x60_curiosity_wilc3000.dtso
++index 4ac5f17..1927e0d 100644
++--- a/sam9x60_curiosity/sam9x60_curiosity_wilc3000.dtso
+++++ b/sam9x60_curiosity/sam9x60_curiosity_wilc3000.dtso
++@@ -29,8 +29,8 @@
++ &{/} {
++ 	wifi_pwrseq: wifi_pwrseq {
++ 		compatible = "mmc-pwrseq-wilc1000", "mmc-pwrseq-wilc";
++-		reset-gpios = <&pioA 14 GPIO_ACTIVE_HIGH>;
++-		powerdown-gpios = <&pioC 8 GPIO_ACTIVE_HIGH>;
+++		reset-gpios = <&pioC 31 GPIO_ACTIVE_HIGH>;
+++		powerdown-gpios = <&pioA 29 GPIO_ACTIVE_HIGH>;
++ 		pinctrl-0 = <&pinctrl_wilc_pwrseq_default>;
++ 		pinctrl-names = "default";
++ 		status = "okay";
++@@ -39,10 +39,11 @@
++ 
++ &pinctrl {
++ 	wilc_pwrseq {
++-		pinctrl_wilc_pwrseq_default: pinctrl_wilc_pwrseq {
++-			atmel,pins = <AT91_PIOC 8 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_DOWN
++-				      AT91_PIOA 14 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_DOWN>;
+++			pinctrl_wilc_pwrseq_default: pinctrl_wilc_pwrseq {
+++				atmel,pins =
+++					<AT91_PIOA 29 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_DOWN
+++					 AT91_PIOC 31 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_DOWN>;
+++			};
++ 		};
++-	};
++ };
++ 
+diff --git a/patches/linux/0000_sam9x60_hobby_linux.patch b/patches/linux/0000_sam9x60_hobby_linux.patch
+new file mode 100644
+index 0000000..e0608f8
+--- /dev/null
++++ b/patches/linux/0000_sam9x60_hobby_linux.patch
+@@ -0,0 +1,56 @@
++diff --git a/arch/arm/boot/dts/at91-sam9x60_curiosity.dts b/arch/arm/boot/dts/at91-sam9x60_curiosity.dts
++index 75e6727b5e3a..c1bfd70551ae 100644
++--- a/arch/arm/boot/dts/at91-sam9x60_curiosity.dts
+++++ b/arch/arm/boot/dts/at91-sam9x60_curiosity.dts
++@@ -43,13 +43,18 @@ gpio-keys {
++ 		pinctrl-names = "default";
++ 		pinctrl-0 = <&pinctrl_key_gpio_default>;
++ 		status = "okay";
++-
++-		button-user {
++-			label = "PB_USER";
++-			gpios = <&pioA 29 GPIO_ACTIVE_LOW>;
+++		sw2 {
+++			label = "PB_USER_SW2";
+++			gpios = <&pioD 3 GPIO_ACTIVE_LOW>;
++ 			linux,code = <KEY_PROG1>;
++ 			wakeup-source;
++ 		};
+++		sw4 {
+++			label = "PB_USER_SW4";
+++			gpios = <&pioD 20 GPIO_ACTIVE_LOW>;
+++			linux,code = <KEY_PROG2>;
+++			wakeup-source;
+++		};
++ 	};
++ 
++ 	leds {
++@@ -361,7 +366,9 @@ pinctrl_flx7_default: flx7_usart {
++ 
++ 	gpio_keys {
++ 		pinctrl_key_gpio_default: pinctrl_key_gpio {
++-			atmel,pins = <AT91_PIOA 29 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>;
+++			atmel,pins =
+++			<AT91_PIOD 3 AT91_PERIPH_GPIO AT91_PINCTRL_NONE
+++			AT91_PIOD 20 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>;
++ 		};
++ 	};
++ 
++@@ -433,7 +440,7 @@ AT91_PIOA 19 AT91_PERIPH_A (AT91_PINCTRL_PULL_UP | AT91_PINCTRL_DRIVE_STRENGTH_H
++ 		};
++ 		pinctrl_sdmmc0_cd: sdmmc0_cd {
++ 			atmel,pins =
++-				<AT91_PIOA 25 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>;
+++				<AT91_PIOD 2 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>;
++ 		};
++ 	};
++ 
++@@ -473,7 +480,7 @@ &sdmmc0 {
++ 	bus-width = <4>;
++ 	pinctrl-names = "default";
++ 	pinctrl-0 = <&pinctrl_sdmmc0_default &pinctrl_sdmmc0_cd>;
++-	cd-gpios = <&pioA 25 GPIO_ACTIVE_LOW>;
+++	cd-gpios = <&pioD 2 GPIO_ACTIVE_LOW>;
++ 	disable-wp;
++ 	status = "okay";
++ };
