@@ -1,0 +1,370 @@
+diff --git a/Makefile b/Makefile
+index 4dbe1c8..540da25 100644
+--- a/Makefile
++++ b/Makefile
+@@ -5,7 +5,7 @@ DTC_OPTIONS += -Wno-unit_address_vs_reg -Wno-graph_child_address -Wno-pwms_prope
+ KERNEL_DIR?=../linux
+ KERNEL_BUILD_DIR?=$(KERNEL_DIR)
+ DTC?=$(KERNEL_BUILD_DIR)/scripts/dtc/dtc
+-BDIR?=sam9x60ek sama5d27_som1_ek sama5d27_wlsom1_ek sama5d2_icp sama5d2_ptc_ek sama5d2_xplained sama5d2_xplained_grts sama5d3_xplained sama5d3_eds sama5d4_xplained sama7g5ek sam9x60_curiosity mpfs_icicle
++BDIR?=sam9x60ek sama5d27_som1_ek sama5d27_wlsom1_ek sama5d2_icp sama5d2_ptc_ek sama5d2_xplained sama5d2_xplained_grts sama5d3_xplained sama5d3_eds sama5d4_xplained sama7g5ek sam9x60_curiosity sam9x60_hobby mpfs_icicle
+ 
+ # workaround to make mkimage use the same dtc as we do
+ PATH:=$(shell dirname $(DTC)):$(PATH)
+@@ -13,6 +13,7 @@ PATH:=$(shell dirname $(DTC)):$(PATH)
+ AT91SAM9X5EK_DTBO_OBJECTS:= $(patsubst %.dtso,%.dtbo,$(wildcard at91sam9x5ek/*.dtso))
+ SAM9X60EK_DTBO_OBJECTS:= $(patsubst %.dtso,%.dtbo,$(wildcard sam9x60ek/*.dtso))
+ SAM9X60_CURIOSITY_DTBO_OBJECTS:= $(patsubst %.dtso,%.dtbo,$(wildcard sam9x60_curiosity/*.dtso))
++SAM9X60_HOBBY_DTBO_OBJECTS:= $(patsubst %.dtso,%.dtbo,$(wildcard sam9x60_hobby/*.dtso))
+ SAM9X75EB_DTBO_OBJECTS:= $(patsubst %.dtso,%.dtbo,$(wildcard sam9x75eb/*.dtso))
+ SAMA5D27_SOM1_EK_DTBO_OBJECTS:= $(patsubst %.dtso,%.dtbo,$(wildcard sama5d27_som1_ek/*.dtso))
+ SAMA5D27_WLSOM1_EK_DTBO_OBJECTS:= $(patsubst %.dtso,%.dtbo,$(wildcard sama5d27_wlsom1_ek/*.dtso))
+@@ -41,6 +42,9 @@ sam9x60ek_dtbos: $(SAM9X60EK_DTBO_OBJECTS)
+ 
+ sam9x60_curiosity_dtbos: $(SAM9X60_CURIOSITY_DTBO_OBJECTS)
+ 
++sam9x60_hobby_dtbos: $(SAM9X60_HOBBY_DTBO_OBJECTS)
++sam9x60_hobby_dtbos: $(SAM9X60_HOBBY_DTBO_OBJECTS)
++
+ sam9x75eb_dtbos: $(SAM9X75EB_DTBO_OBJECTS)
+ 
+ sama5d27_som1_ek_dtbos: $(SAMA5D27_SOM1_EK_DTBO_OBJECTS)
+diff --git a/sam9x60_hobby.its b/sam9x60_hobby.its
+new file mode 100644
+index 0000000..879f57c
+--- /dev/null
++++ b/sam9x60_hobby.its
+@@ -0,0 +1,105 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * sam9x60_hobby.its - Flattened Image Tree file for SAM9X60 Hobby board
++ *
++ * Copyright (C) 2021 Microchip Technology Inc. and its subsidiaries
++ *
++ * Author: Patrick Lin <patrick.lin@microchip.com>
++ */
++/dts-v1/;
++
++/ {
++	description = "Microchip SAM9X60-Hobby FIT Image";
++	#address-cells = <1>;
++
++	images {
++		kernel {
++			description = "Linux4SAM Linux kernel";
++			data = /incbin/("./zImage");
++			type = "kernel";
++			arch = "arm";
++			os = "linux";
++			compression = "none";
++			load = <0x22000000>;
++			entry = <0x22000000>;
++			hash-1 {
++				algo = "crc32";
++			};
++			hash-2 {
++				algo = "sha1";
++			};
++		};
++
++		base_fdt {
++			description = "SAM9X60-Hobby Flattened Device Tree blob";
++			data = /incbin/("./at91-sam9x60_hobby.dtb");
++			type = "flat_dt";
++			arch = "arm";
++			compression = "none";
++			load = <0x23000000>;
++			hash-1 {
++				algo = "crc32";
++			};
++			hash-2 {
++				algo = "sha1";
++			};
++		};
++
++		fdt_pda5 {
++			description = "Device Tree blob pda5000 overlay";
++			data = /incbin/("./sam9x60_hobby/sam9x60_hobby_pda5.dtbo");
++			type = "flat_dt";
++			arch = "arm";
++			compression = "none";
++			load = <0x23100000>;
++			hash-1 {
++				algo = "crc32";
++			};
++			hash-2 {
++				algo = "sha1";
++			};
++		};
++
++		fdt_wilc3000 {
++			description = "Device Tree blob WILC3000 overlay";
++			data =
++			/incbin/("./sam9x60_hobby/sam9x60_hobby_wilc3000.dtbo");
++			type = "flat_dt";
++			arch = "arm";
++			compression = "none";
++			load = <0x23110000>;
++			hash-1 {
++				algo = "crc32";
++			};
++			hash-2 {
++				algo = "sha1";
++			};
++		};
++
++    };
++
++	configurations {
++		default = "kernel_dtb";
++
++		kernel_dtb {
++			description = "Linux kernel and base FDT blob for SAM9X60-Hobby board";
++			kernel = "kernel";
++			fdt = "base_fdt";
++		};
++
++		base_dtb {
++			description = "Base FDT blob for SAM9X60-Hobby board";
++			fdt = "base_fdt";
++		};
++
++		pda5 {
++			description = "FDT overlay blob for PDA TM5000 screen";
++			fdt = "fdt_pda5";
++		};
++
++		wilc {
++			description = "FDT overlay blob for WILC3000";
++			fdt = "fdt_wilc3000";
++		};
++	};
++};
+diff --git a/sam9x60_hobby/sam9x60_hobby_pda5.dtso b/sam9x60_hobby/sam9x60_hobby_pda5.dtso
+new file mode 100644
+index 0000000..ab11738
+--- /dev/null
++++ b/sam9x60_hobby/sam9x60_hobby_pda5.dtso
+@@ -0,0 +1,168 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * sam9x60_curiosity_pda5.dtso - Device Tree file for SAM9X60-CURIOSITY board
++ * overlay blob for PDA5000 LCD.
++ *
++ * Copyright (C) 2022 Microchip Technology, Inc. and its subsidiaries
++ * Author: Durai Manickam KR <durai.manickamkr@microchip.com>
++ *
++ */
++/dts-v1/;
++/plugin/;
++
++#include "dt-bindings/pinctrl/at91.h"
++
++&i2c6 {
++	dmas = <0>, <0>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++	status = "okay";
++
++	qt1070: keyboard@1b {
++		compatible = "qt1070";
++		reg = <0x1b>;
++		interrupt-parent = <&pioC>;
++		interrupts = <31 0x0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_qt1070_irq>;
++	};
++
++	mxt: atmel_mxt_ts@4a {
++		compatible = "atmel,atmel_mxt_ts";
++		reg = <0x4a>;
++		interrupt-parent = <&pioC>;
++		interrupts = <25 0x8>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_mxt_irq>;
++		wakeup-source;
++	};
++};
++
++&hlcdc {
++	status = "okay";
++
++	hlcdc-display-controller {
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_lcd_base &pinctrl_lcd_rgb666>;
++		port@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			hlcdc_panel_output: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&panel_input>;
++			};
++		};
++	};
++
++	hlcdc_pwm: hlcdc-pwm {
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_lcd_pwm>;
++	};
++};
++
++&gpu {
++	status = "okay";
++};
++
++&pinctrl {
++	qt1070 {
++		pinctrl_qt1070_irq: qt1070_irq {
++			atmel,pins = <AT91_PIOC 31 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP_DEGLITCH>;
++		};
++	};
++
++	mxt {
++		pinctrl_mxt_irq: mxt_irq {
++			atmel,pins = <AT91_PIOC 25 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP_DEGLITCH>;
++		};
++	};
++
++	lcd {
++		pinctrl_lcd_base: lcd-base-0 {
++			atmel,pins = <AT91_PIOC 27 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDVSYNC */
++				      AT91_PIOC 28 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDHSYNC */
++				      AT91_PIOC 24 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDDISP */
++				      AT91_PIOC 29 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDDEN */
++				      AT91_PIOC 30 AT91_PERIPH_A AT91_PINCTRL_NONE>;	/* LCDPCK */
++		};
++
++		pinctrl_lcd_rgb666: lcd-rgb-3 {
++			atmel,pins = <AT91_PIOC 2 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD2 pin */
++				      AT91_PIOC 3 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD3 pin */
++				      AT91_PIOC 4 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD4 pin */
++				      AT91_PIOC 5 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD5 pin */
++				      AT91_PIOC 6 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD6 pin */
++				      AT91_PIOC 7 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD7 pin */
++				      AT91_PIOC 10 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD10 pin */
++				      AT91_PIOC 11 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD11 pin */
++				      AT91_PIOC 12 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD12 pin */
++				      AT91_PIOC 13 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD13 pin */
++				      AT91_PIOC 14 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD14 pin */
++				      AT91_PIOC 15 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD15 pin */
++				      AT91_PIOC 18 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD18 pin */
++				      AT91_PIOC 19 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD19 pin */
++				      AT91_PIOC 20 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD20 pin */
++				      AT91_PIOC 21 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD21 pin */
++				      AT91_PIOC 22 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD22 pin */
++				      AT91_PIOC 23 AT91_PERIPH_A AT91_PINCTRL_NONE>;	/* LCDD23 pin */
++		};
++
++		pinctrl_lcd_pwm: lcd_pwm {
++			atmel,pins = <AT91_PIOC 26 AT91_PERIPH_A AT91_PINCTRL_NONE>;
++		};
++	};
++};
++
++&{/} {
++	model = "Microchip SAM9X60-CURIOSITY TM5000";
++
++	backlight: backlight {
++		compatible = "pwm-backlight";
++		pwms = <&hlcdc_pwm 0 50000 0>;
++		brightness-levels = <0 4 8 16 32 64 128 255>;
++		default-brightness-level = <7>;
++		power-supply = <&bl_reg>;
++		status = "okay";
++	};
++
++	bl_reg: backlight_regulator {
++		compatible = "regulator-fixed";
++		regulator-name = "backlight-power-supply";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		status = "okay";
++	};
++
++	panel: panel {
++		compatible = "pda,91-00156-a0", "simple-panel";
++		backlight = <&backlight>;
++		power-supply = <&panel_reg>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "okay";
++
++		port@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			panel_input: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&hlcdc_panel_output>;
++			};
++		};
++	};
++
++	panel_reg: panel_regulator {
++		compatible = "regulator-fixed";
++		regulator-name = "panel-power-supply";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		status = "okay";
++	};
++};
++
++&isi {
++	status = "disabled";
++};
++
+diff --git a/sam9x60_hobby/sam9x60_hobby_wilc3000.dtso b/sam9x60_hobby/sam9x60_hobby_wilc3000.dtso
+new file mode 100644
+index 0000000..4ac5f17
+--- /dev/null
++++ b/sam9x60_hobby/sam9x60_hobby_wilc3000.dtso
+@@ -0,0 +1,48 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * sam9x60_curiosity_wilc3000.dtso - Device Tree file for SAM9x60-CURIOSITY board
++ * overlay blob for ATWILC3000 - Wireless Modules.
++ *
++ * Copyright (C) 2022 Microchip Technology, Inc. and its subsidiaries
++ * Author: Durai Manickam KR <durai.manickamkr@microchip.com>
++ *
++ */
++/dts-v1/;
++/plugin/;
++
++#include "dt-bindings/pinctrl/at91.h"
++#include <dt-bindings/gpio/gpio.h>
++
++&sdmmc1 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	status = "okay";
++	mmc-pwrseq = <&wifi_pwrseq>;
++	wilc: wilc@1 {
++		compatible = "microchip,wilc1000", "microchip,wilc3000";
++		reg = <1>;
++		bus-width = <4>;
++		status = "okay";
++	};
++};
++
++&{/} {
++	wifi_pwrseq: wifi_pwrseq {
++		compatible = "mmc-pwrseq-wilc1000", "mmc-pwrseq-wilc";
++		reset-gpios = <&pioA 14 GPIO_ACTIVE_HIGH>;
++		powerdown-gpios = <&pioC 8 GPIO_ACTIVE_HIGH>;
++		pinctrl-0 = <&pinctrl_wilc_pwrseq_default>;
++		pinctrl-names = "default";
++		status = "okay";
++	};
++};
++
++&pinctrl {
++	wilc_pwrseq {
++		pinctrl_wilc_pwrseq_default: pinctrl_wilc_pwrseq {
++			atmel,pins = <AT91_PIOC 8 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_DOWN
++				      AT91_PIOA 14 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_DOWN>;
++		};
++	};
++};
++
