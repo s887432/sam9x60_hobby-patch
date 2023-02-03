@@ -1,0 +1,732 @@
+diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
+index 3e367f753f..e2d0c9ba77 100644
+--- a/arch/arm/dts/Makefile
++++ b/arch/arm/dts/Makefile
+@@ -989,6 +989,7 @@ dtb-$(CONFIG_TARGET_AT91SAM9X5EK) += \
+ dtb-$(CONFIG_TARGET_SAM9X60EK) += sam9x60ek.dtb
+ 
+ dtb-$(CONFIG_TARGET_SAM9X60_CURIOSITY) += at91-sam9x60_curiosity.dtb
++dtb-$(CONFIG_TARGET_SAM9X60_HOBBY) += at91-sam9x60_hobby.dtb
+ 
+ dtb-$(CONFIG_TARGET_AT91SAM9N12EK) += at91sam9n12ek.dtb
+ 
+diff --git a/arch/arm/dts/at91-sam9x60_hobby-u-boot.dtsi b/arch/arm/dts/at91-sam9x60_hobby-u-boot.dtsi
+new file mode 100644
+index 0000000000..2655ce0447
+--- /dev/null
++++ b/arch/arm/dts/at91-sam9x60_hobby-u-boot.dtsi
+@@ -0,0 +1,79 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * at91-sam9x60_hobby-u-boot.dtsi - Device Tree Include file for SAM9X60
++ * HOBBY.
++ *
++ * Copyright (C) 2022 Microchip Technology Inc. and its subsidiaries
++ *
++ * Author: Patrick Lin <patrick.lin@microchip.com>
++ */
++
++/ {
++	ahb {
++		u-boot,dm-pre-reloc;
++
++		apb {
++			u-boot,dm-pre-reloc;
++
++			pinctrl {
++				u-boot,dm-pre-reloc;
++			};
++		};
++	};
++
++	chosen {
++		u-boot,dm-pre-reloc;
++	};
++};
++
++&clk32 {
++	u-boot,dm-pre-reloc;
++};
++
++&dbgu {
++	u-boot,dm-pre-reloc;
++};
++
++&main_rc {
++	u-boot,dm-pre-reloc;
++};
++
++&main_xtal {
++	u-boot,dm-pre-reloc;
++};
++
++&pinctrl_dbgu {
++	u-boot,dm-pre-reloc;
++};
++
++&pinctrl_sdhci0 {
++	u-boot,dm-pre-reloc;
++};
++
++&pioA {
++	u-boot,dm-pre-reloc;
++};
++
++&pioB {
++	u-boot,dm-pre-reloc;
++};
++
++&pit64b0 {
++	u-boot,dm-pre-reloc;
++};
++
++&pmc {
++	u-boot,dm-pre-reloc;
++};
++
++&sdhci0 {
++	u-boot,dm-pre-reloc;
++};
++
++&slow_rc_osc {
++	u-boot,dm-pre-reloc;
++};
++
++&slow_xtal {
++	u-boot,dm-pre-reloc;
++};
+diff --git a/arch/arm/dts/at91-sam9x60_hobby.dts b/arch/arm/dts/at91-sam9x60_hobby.dts
+new file mode 100644
+index 0000000000..4894846cd6
+--- /dev/null
++++ b/arch/arm/dts/at91-sam9x60_hobby.dts
+@@ -0,0 +1,195 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * at91-sam9x60_hobby.dts - Device Tree file for SAM9X60 HOBBY board
++ *
++ * Copyright (C) 2022 Microchip Technology Inc. and its subsidiaries
++ *
++ * Author: Patrick Lin <patrick.lin@microchip.com>
++ */
++/dts-v1/;
++#include <dt-bindings/mfd/atmel-flexcom.h>
++#include "sam9x60.dtsi"
++
++/ {
++	model = "Microchip SAM9X60 HOBBY";
++	compatible = "microchip,sam9x60-hobby", "microchip,sam9x60", "atmel,at91sam9";
++
++	ahb {
++		apb {
++			flx0: flexcom@f801c600 {
++				atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_TWI>;
++				status = "okay";
++
++				i2c@600 {
++					compatible = "atmel,sama5d2-i2c";
++					reg = <0x600 0x200>;
++					pinctrl-names = "default";
++					pinctrl-0 = <&pinctrl_flx0>;
++					#address-cells = <1>;
++					#size-cells = <0>;
++					clocks = <&pmc PMC_TYPE_PERIPHERAL 5>;
++					status = "okay";
++
++					eeprom@53 {
++						compatible = "atmel,24c02";
++						reg = <0x53>;
++						pagesize = <16>;
++					};
++				};
++			};
++
++			pinctrl {
++				ebi {
++					pinctrl_ebi_data_0_7: ebi-data-lsb-0 {
++						atmel,pins =
++							<AT91_PIOD 6 AT91_PERIPH_A (AT91_PINCTRL_NONE | AT91_PINCTRL_SLEWRATE_DIS)
++							 AT91_PIOD 7 AT91_PERIPH_A (AT91_PINCTRL_NONE | AT91_PINCTRL_SLEWRATE_DIS)
++							 AT91_PIOD 8 AT91_PERIPH_A (AT91_PINCTRL_NONE | AT91_PINCTRL_SLEWRATE_DIS)
++							 AT91_PIOD 9 AT91_PERIPH_A (AT91_PINCTRL_NONE | AT91_PINCTRL_SLEWRATE_DIS)
++							 AT91_PIOD 10 AT91_PERIPH_A (AT91_PINCTRL_NONE | AT91_PINCTRL_SLEWRATE_DIS)
++							 AT91_PIOD 11 AT91_PERIPH_A (AT91_PINCTRL_NONE | AT91_PINCTRL_SLEWRATE_DIS)
++							 AT91_PIOD 12 AT91_PERIPH_A (AT91_PINCTRL_NONE | AT91_PINCTRL_SLEWRATE_DIS)
++							 AT91_PIOD 13 AT91_PERIPH_A (AT91_PINCTRL_NONE | AT91_PINCTRL_SLEWRATE_DIS)>;
++					};
++
++					pinctrl_ebi_addr_nand: ebi-addr-0 {
++						atmel,pins =
++							<AT91_PIOD 2 AT91_PERIPH_A (AT91_PINCTRL_NONE | AT91_PINCTRL_SLEWRATE_DIS)
++							 AT91_PIOD 3 AT91_PERIPH_A (AT91_PINCTRL_NONE | AT91_PINCTRL_SLEWRATE_DIS)>;
++					};
++				};
++
++				nand {
++					pinctrl_nand_oe_we: nand-oe-we-0 {
++						atmel,pins =
++							<AT91_PIOD 0 AT91_PERIPH_A (AT91_PINCTRL_NONE | AT91_PINCTRL_SLEWRATE_DIS)
++							 AT91_PIOD 1 AT91_PERIPH_A (AT91_PINCTRL_NONE | AT91_PINCTRL_SLEWRATE_DIS)>;
++					};
++
++					pinctrl_nand_rb: nand-rb-0 {
++						atmel,pins =
++							<AT91_PIOD 5 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP>;
++					};
++
++					pinctrl_nand_cs: nand-cs-0 {
++						atmel,pins =
++							<AT91_PIOD 4 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP>;
++					};
++				};
++
++					pinctrl_flx0: flx0_default {
++						atmel,pins =
++							<AT91_PIOA 0 AT91_PERIPH_A AT91_PINCTRL_NONE
++							 AT91_PIOA 1 AT91_PERIPH_A AT91_PINCTRL_NONE>;
++					};
++
++					pinctrl_onewire_tm_default: onewire_tm_default {
++						atmel,pins =
++							<AT91_PIOD 14 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP>;
++					};
++			};
++		};
++	};
++
++	chosen {
++		stdout-path = &dbgu;
++		i2c0 = &flx0;
++	};
++
++	clocks {
++		slow_xtal: slow_xtal {
++			clock-frequency = <32768>;
++		};
++
++		main_xtal: main_xtal {
++			clock-frequency = <24000000>;
++		};
++	};
++
++	memory {
++		reg = <0x20000000 0x8000000>;
++	};
++
++	onewire_tm: onewire {
++		gpios = <&pioD 14 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_onewire_tm_default>;
++		status = "okay";
++
++		w1_eeprom: w1_eeprom@0 {
++			compatible = "maxim,ds24b33";
++			status = "okay";
++		};
++	};
++};
++
++&ebi {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_ebi_addr_nand &pinctrl_ebi_data_0_7>;
++	status = "okay";
++
++	nand_controller: nand-controller {
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_nand_oe_we &pinctrl_nand_cs &pinctrl_nand_rb>;
++		status = "disabled";
++
++		nand@3 {
++			reg = <0x3 0x0 0x800000>;
++			atmel,rb = <0>;
++			rb-gpios = <&pioD 5 GPIO_ACTIVE_HIGH>;
++			cs-gpios = <&pioD 4 GPIO_ACTIVE_HIGH>;
++			nand-bus-width = <8>;
++			nand-ecc-mode = "hw";
++			nand-ecc-strength = <8>;
++			nand-ecc-step-size = <512>;
++			nand-on-flash-bbt;
++			label = "atmel_nand";
++
++			partitions {
++				compatible = "fixed-partitions";
++				#address-cells = <1>;
++				#size-cells = <1>;
++
++				at91bootstrap@0 {
++					label = "at91bootstrap";
++					reg = <0x0 0x40000>;
++				};
++
++				uboot@40000 {
++					label = "u-boot";
++					reg = <0x40000 0xc0000>;
++				};
++
++				ubootenvred@100000 {
++					label = "U-Boot Env Redundant";
++					reg = <0x100000 0x40000>;
++				};
++
++				ubootenv@140000 {
++					label = "U-Boot Env";
++					reg = <0x140000 0x40000>;
++				};
++
++				dtb@180000 {
++					label = "device tree";
++					reg = <0x180000 0x80000>;
++				};
++
++				kernel@200000 {
++					label = "kernel";
++					reg = <0x200000 0x600000>;
++				};
++
++				rootfs@800000 {
++					label = "rootfs";
++					reg = <0x800000 0x1f800000>;
++				};
++			};
++		};
++	};
++};
++
++&macb0 {
++	phy-mode = "rmii";
++	status = "disabled";
++};
+diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
+index 6ac46d453c..e7370ccee0 100644
+--- a/arch/arm/mach-at91/Kconfig
++++ b/arch/arm/mach-at91/Kconfig
+@@ -168,6 +168,12 @@ config TARGET_SAM9X60_CURIOSITY
+         select BOARD_EARLY_INIT_F
+         select BOARD_LATE_INIT
+ 
++config TARGET_SAM9X60_HOBBY
++        bool "SAM9X60 HOBBY board"
++        select SAM9X60
++        select BOARD_EARLY_INIT_F
++        select BOARD_LATE_INIT
++		
+ config TARGET_SAMA5D2_PTC_EK
+ 	bool "SAMA5D2 PTC EK board"
+ 	select BOARD_EARLY_INIT_F
+@@ -323,6 +329,7 @@ source "board/atmel/at91sam9rlek/Kconfig"
+ source "board/atmel/at91sam9x5ek/Kconfig"
+ source "board/atmel/sam9x60ek/Kconfig"
+ source "board/atmel/sam9x60_curiosity/Kconfig"
++source "board/atmel/sam9x60_hobby/Kconfig"
+ source "board/atmel/sama7g5ek/Kconfig"
+ source "board/atmel/sama5d2_ptc_ek/Kconfig"
+ source "board/atmel/sama5d2_xplained/Kconfig"
+diff --git a/board/atmel/sam9x60_hobby/Kconfig b/board/atmel/sam9x60_hobby/Kconfig
+new file mode 100644
+index 0000000000..ed982f7dfd
+--- /dev/null
++++ b/board/atmel/sam9x60_hobby/Kconfig
+@@ -0,0 +1,15 @@
++if TARGET_SAM9X60_HOBBY
++
++config SYS_BOARD
++	default "sam9x60_hobby"
++
++config SYS_VENDOR
++	default "atmel"
++
++config SYS_SOC
++        default "at91"
++
++config SYS_CONFIG_NAME
++	default "sam9x60_hobby"
++
++endif
+diff --git a/board/atmel/sam9x60_hobby/MAINTAINERS b/board/atmel/sam9x60_hobby/MAINTAINERS
+new file mode 100644
+index 0000000000..51d8bacaef
+--- /dev/null
++++ b/board/atmel/sam9x60_hobby/MAINTAINERS
+@@ -0,0 +1,7 @@
++SAM9X60 HOBBY BOARD
++M:	Patrick Lin <patrick.lin@microchip.com>
++S:	Maintained
++F:	board/atmel/sam9x60_hobby/
++F:	include/configs/sam9x60_hobby.h
++F:	configs/sam9x60_hobby_mmc_defconfig
++F:	configs/sam9x60_hobby_mmc1_defconfig
+diff --git a/board/atmel/sam9x60_hobby/Makefile b/board/atmel/sam9x60_hobby/Makefile
+new file mode 100644
+index 0000000000..be116d10fe
+--- /dev/null
++++ b/board/atmel/sam9x60_hobby/Makefile
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0+
++#
++# Copyright (C) 2022 Microchip Technology Inc. and its subsidiaries
++#
++# Author: Durai Manickam KR <durai.manickamkr@microchip.com>
++
++obj-y += sam9x60_hobby.o
+diff --git a/board/atmel/sam9x60_hobby/sam9x60_hobby.c b/board/atmel/sam9x60_hobby/sam9x60_hobby.c
+new file mode 100644
+index 0000000000..0fe0de9fde
+--- /dev/null
++++ b/board/atmel/sam9x60_hobby/sam9x60_hobby.c
+@@ -0,0 +1,86 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2022 Microchip Technology Inc. and its subsidiaries
++ *
++ * Author: Durai Manickam KR <durai.manickamkr@microchip.com>
++ */
++
++#include <common.h>
++#include <debug_uart.h>
++#include <fdtdec.h>
++#include <init.h>
++#include <asm/arch/at91_common.h>
++#include <asm/arch/at91_rstc.h>
++#include <asm/arch/at91_sfr.h>
++#include <asm/arch/at91sam9_smc.h>
++#include <asm/arch/clk.h>
++#include <asm/arch/gpio.h>
++#include <asm/global_data.h>
++#include <asm/io.h>
++#include <asm/mach-types.h>
++
++extern void at91_pda_detect(void);
++
++DECLARE_GLOBAL_DATA_PTR;
++
++void at91_prepare_cpu_var(void);
++
++static void board_leds_init(void)
++{
++	at91_set_pio_output(AT91_PIO_PORTD, 17, 0);	/* LED RED */
++	at91_set_pio_output(AT91_PIO_PORTD, 19, 0);	/* LED GREEN */
++	at91_set_pio_output(AT91_PIO_PORTD, 21, 1);	/* LED BLUE */
++}
++
++int board_late_init(void)
++{
++	at91_prepare_cpu_var();
++
++	at91_pda_detect();
++
++	return 0;
++}
++
++#ifdef CONFIG_DEBUG_UART_BOARD_INIT
++void board_debug_uart_init(void)
++{
++	at91_seriald_hw_init();
++}
++#endif
++
++int board_early_init_f(void)
++{
++	return 0;
++}
++
++#define MAC24AA_MAC_OFFSET     0xfa
++
++#ifdef CONFIG_MISC_INIT_R
++int misc_init_r(void)
++{
++#ifdef CONFIG_I2C_EEPROM
++	at91_set_ethaddr(MAC24AA_MAC_OFFSET);
++#endif
++	return 0;
++}
++#endif
++
++int board_init(void)
++{
++	/* address of boot parameters */
++	gd->bd->bi_boot_params = gd->bd->bi_dram[0].start + 0x100;
++
++	board_leds_init();
++
++	return 0;
++}
++
++int dram_init_banksize(void)
++{
++	return fdtdec_setup_memory_banksize();
++}
++
++int dram_init(void)
++{
++	return fdtdec_setup_mem_size_base();
++}
+diff --git a/configs/sam9x60_hobby_mmc1_defconfig b/configs/sam9x60_hobby_mmc1_defconfig
+new file mode 100644
+index 0000000000..cbdfd45efc
+--- /dev/null
++++ b/configs/sam9x60_hobby_mmc1_defconfig
+@@ -0,0 +1,76 @@
++CONFIG_ARM=y
++CONFIG_SKIP_LOWLEVEL_INIT=y
++CONFIG_ARCH_AT91=y
++CONFIG_SYS_TEXT_BASE=0x23f00000
++CONFIG_SYS_MALLOC_LEN=0x81000
++CONFIG_SYS_MALLOC_F_LEN=0x8000
++CONFIG_TARGET_SAM9X60_HOBBY=y
++CONFIG_ATMEL_LEGACY=y
++CONFIG_NR_DRAM_BANKS=8
++CONFIG_ENV_SIZE=0x4000
++CONFIG_DM_GPIO=y
++CONFIG_DEFAULT_DEVICE_TREE="at91-sam9x60_hobby"
++CONFIG_SYS_PROMPT="U-Boot> "
++CONFIG_DEBUG_UART_BASE=0xfffff200
++CONFIG_DEBUG_UART_CLOCK=200000000
++CONFIG_DEBUG_UART_BOARD_INIT=y
++CONFIG_SYS_LOAD_ADDR=0x22000000
++CONFIG_DEBUG_UART=y
++CONFIG_HAS_CUSTOM_SYS_INIT_SP_ADDR=y
++CONFIG_CUSTOM_SYS_INIT_SP_ADDR=0x2000bf00
++CONFIG_FIT=y
++CONFIG_SD_BOOT=y
++CONFIG_BOOTDELAY=3
++CONFIG_USE_BOOTARGS=y
++CONFIG_BOOTARGS="console=ttyS0,115200 root=/dev/mmcblk1p2 rw rootwait"
++CONFIG_USE_BOOTCOMMAND=y
++CONFIG_BOOTCOMMAND="fatload mmc 1:1 0x21000000 at91-sam9x60_hobby.dtb; fatload mmc 1:1 0x22000000 zImage; bootz 0x22000000 - 0x21000000"
++CONFIG_SYS_CONSOLE_IS_IN_ENV=y
++# CONFIG_DISPLAY_BOARDINFO is not set
++CONFIG_MISC_INIT_R=y
++CONFIG_HUSH_PARSER=y
++CONFIG_SYS_CBSIZE=256
++CONFIG_SYS_PBSIZE=281
++CONFIG_CMD_BOOTZ=y
++CONFIG_SYS_BOOTM_LEN=0x2000000
++CONFIG_CMD_CLK=y
++CONFIG_CMD_DM=y
++CONFIG_CMD_GPIO=y
++CONFIG_CMD_I2C=y
++CONFIG_CMD_MMC=y
++# CONFIG_CMD_SETEXPR is not set
++CONFIG_CMD_DHCP=y
++CONFIG_BOOTP_BOOTFILESIZE=y
++CONFIG_CMD_MII=y
++CONFIG_CMD_PING=y
++CONFIG_CMD_HASH=y
++CONFIG_HASH_VERIFY=y
++CONFIG_CMD_FAT=y
++CONFIG_OF_CONTROL=y
++CONFIG_ENV_IS_IN_FAT=y
++CONFIG_ENV_FAT_DEVICE_AND_PART="1:1"
++CONFIG_SYS_RELOC_GD_ENV_ADDR=y
++CONFIG_DM=y
++CONFIG_CLK=y
++CONFIG_CLK_CCF=y
++CONFIG_CLK_AT91=y
++CONFIG_AT91_GENERIC_CLK=y
++CONFIG_AT91_SAM9X60_PLL=y
++CONFIG_CPU=y
++CONFIG_AT91_GPIO=y
++CONFIG_DM_I2C=y
++CONFIG_SYS_I2C_AT91=y
++CONFIG_I2C_EEPROM=y
++CONFIG_MICROCHIP_FLEXCOM=y
++CONFIG_MMC_SDHCI=y
++CONFIG_MMC_SDHCI_ATMEL=y
++CONFIG_PHY_MICREL=y
++CONFIG_MACB=y
++CONFIG_PINCTRL=y
++CONFIG_PINCTRL_AT91=y
++CONFIG_DM_SERIAL=y
++CONFIG_DEBUG_UART_ANNOUNCE=y
++CONFIG_ATMEL_USART=y
++CONFIG_TIMER=y
++CONFIG_MCHP_PIT64B_TIMER=y
++CONFIG_OF_LIBFDT_OVERLAY=y
+diff --git a/configs/sam9x60_hobby_mmc_defconfig b/configs/sam9x60_hobby_mmc_defconfig
+new file mode 100644
+index 0000000000..dfca0d9ca0
+--- /dev/null
++++ b/configs/sam9x60_hobby_mmc_defconfig
+@@ -0,0 +1,91 @@
++CONFIG_ARM=y
++CONFIG_SKIP_LOWLEVEL_INIT=y
++CONFIG_ARCH_AT91=y
++CONFIG_SYS_TEXT_BASE=0x23f00000
++CONFIG_SYS_MALLOC_LEN=0x81000
++CONFIG_SYS_MALLOC_F_LEN=0x8000
++CONFIG_TARGET_SAM9X60_HOBBY=y
++CONFIG_ATMEL_LEGACY=y
++CONFIG_NR_DRAM_BANKS=8
++CONFIG_ENV_SIZE=0x4000
++CONFIG_DM_GPIO=y
++CONFIG_DEFAULT_DEVICE_TREE="at91-sam9x60_hobby"
++CONFIG_DEBUG_UART_BOARD_INIT=y
++CONFIG_DEBUG_UART_BASE=0xfffff200
++CONFIG_DEBUG_UART_CLOCK=200000000
++CONFIG_DEBUG_UART=y
++CONFIG_SYS_LOAD_ADDR=0x22000000
++CONFIG_FIT=y
++CONFIG_SD_BOOT=y
++CONFIG_BOOTDELAY=3
++CONFIG_USE_BOOTARGS=y
++CONFIG_BOOTARGS="mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait"
++CONFIG_USE_BOOTCOMMAND=y
++CONFIG_BOOTCOMMAND="fatload mmc 0:1 0x21000000 at91-sam9x60_hobby.dtb; fatload mmc 0:1 0x22000000 zImage; bootz 0x22000000 - 0x21000000"
++CONFIG_SYS_CONSOLE_IS_IN_ENV=y
++# CONFIG_DISPLAY_BOARDINFO is not set
++CONFIG_MISC_INIT_R=y
++CONFIG_HUSH_PARSER=y
++CONFIG_SYS_PROMPT="U-Boot> "
++CONFIG_CMD_BOOTZ=y
++CONFIG_CMD_CLK=y
++CONFIG_CMD_DM=y
++# CONFIG_CMD_FLASH is not set
++CONFIG_CMD_GPIO=y
++CONFIG_CMD_I2C=y
++CONFIG_CMD_MMC=y
++CONFIG_CMD_NAND=y
++CONFIG_CMD_NAND_TRIMFFS=y
++# CONFIG_CMD_SETEXPR is not set
++CONFIG_CMD_DHCP=y
++CONFIG_BOOTP_BOOTFILESIZE=y
++CONFIG_CMD_MII=y
++CONFIG_CMD_PING=y
++CONFIG_CMD_HASH=y
++CONFIG_HASH_VERIFY=y
++CONFIG_CMD_FAT=y
++CONFIG_OF_CONTROL=y
++CONFIG_ENV_IS_IN_FAT=y
++CONFIG_ENV_FAT_DEVICE_AND_PART="0:1"
++CONFIG_SYS_RELOC_GD_ENV_ADDR=y
++CONFIG_DM=y
++CONFIG_REGMAP=y
++CONFIG_SYSCON=y
++CONFIG_CLK=y
++CONFIG_CLK_CCF=y
++CONFIG_CLK_AT91=y
++CONFIG_AT91_GENERIC_CLK=y
++CONFIG_AT91_SAM9X60_PLL=y
++CONFIG_CPU=y
++CONFIG_AT91_GPIO=y
++CONFIG_DM_I2C=y
++CONFIG_SYS_I2C_AT91=y
++CONFIG_ATMEL_EBI=y
++CONFIG_MFD_ATMEL_SMC=y
++CONFIG_I2C_EEPROM=y
++CONFIG_MICROCHIP_FLEXCOM=y
++CONFIG_DM_MMC=y
++CONFIG_MMC_SDHCI=y
++CONFIG_MMC_SDHCI_ATMEL=y
++CONFIG_MTD=y
++CONFIG_DM_MTD=y
++CONFIG_MTD_RAW_NAND=y
++CONFIG_DM_NAND_ATMEL=y
++CONFIG_SYS_NAND_ONFI_DETECTION=y
++CONFIG_PHY_MICREL=y
++CONFIG_DM_ETH=y
++CONFIG_MACB=y
++CONFIG_PINCTRL=y
++CONFIG_PINCTRL_AT91=y
++CONFIG_DM_SERIAL=y
++CONFIG_DEBUG_UART_ANNOUNCE=y
++CONFIG_ATMEL_USART=y
++CONFIG_SYSRESET=y
++CONFIG_SYSRESET_AT91=y
++CONFIG_TIMER=y
++CONFIG_MCHP_PIT64B_TIMER=y
++CONFIG_W1=y
++CONFIG_W1_GPIO=y
++CONFIG_W1_EEPROM=y
++CONFIG_W1_EEPROM_DS24XXX=y
++CONFIG_OF_LIBFDT_OVERLAY=y
+diff --git a/include/configs/sam9x60_hobby.h b/include/configs/sam9x60_hobby.h
+new file mode 100644
+index 0000000000..54f0ae581e
+--- /dev/null
++++ b/include/configs/sam9x60_hobby.h
+@@ -0,0 +1,36 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Configuration settings for the SAM9X60 HOBBY board.
++ *
++ * Copyright (C) 2022 Microchip Technology Inc. and its subsidiaries
++ *
++ * Author: Patrick Lin <patrick.lin@microchip.com>
++ */
++
++#ifndef __CONFIG_H__
++#define __CONFIG_H__
++
++#define CONFIG_SYS_AT91_SLOW_CLOCK	32768
++#define CONFIG_SYS_AT91_MAIN_CLOCK	24000000	/* 24 MHz crystal */
++
++#define CONFIG_USART_BASE   ATMEL_BASE_DBGU
++#define CONFIG_USART_ID     0 /* ignored in arm */
++
++/* SDRAM */
++#define CONFIG_SYS_SDRAM_BASE		0x20000000
++#define CONFIG_SYS_SDRAM_SIZE		0x8000000	/* 128 MB */
++
++#ifdef CONFIG_SPL_BUILD
++#define CONFIG_SYS_INIT_SP_ADDR         0x218000
++#else
++#define CONFIG_SYS_INIT_SP_ADDR \
++	(CONFIG_SYS_SDRAM_BASE + 16 * 1024 + CONFIG_SYS_MALLOC_F_LEN - \
++	 GENERATED_GBL_DATA_SIZE)
++#endif
++
++/* NAND flash */
++#ifdef CONFIG_CMD_NAND
++#define CONFIG_SYS_MAX_NAND_DEVICE      1
++#endif
++
++#endif
+diff --git a/tools/boot/bootm.c b/tools/boot/bootm.c
+new file mode 100644
+index 0000000000..31ddd95f63
+--- /dev/null
++++ b/tools/boot/bootm.c
+@@ -0,0 +1 @@
++#include <../boot/bootm.c>
+diff --git a/tools/boot/fdt_region.c b/tools/boot/fdt_region.c
+new file mode 100644
+index 0000000000..1bb9c886c2
+--- /dev/null
++++ b/tools/boot/fdt_region.c
+@@ -0,0 +1 @@
++#include <../boot/fdt_region.c>
+diff --git a/tools/boot/image-cipher.c b/tools/boot/image-cipher.c
+new file mode 100644
+index 0000000000..5013afee61
+--- /dev/null
++++ b/tools/boot/image-cipher.c
+@@ -0,0 +1 @@
++#include <../boot/image-cipher.c>
+diff --git a/tools/boot/image-fit-sig.c b/tools/boot/image-fit-sig.c
+new file mode 100644
+index 0000000000..9da06c71cb
+--- /dev/null
++++ b/tools/boot/image-fit-sig.c
+@@ -0,0 +1 @@
++#include <../boot/image-fit-sig.c>
+diff --git a/tools/boot/image-fit.c b/tools/boot/image-fit.c
+new file mode 100644
+index 0000000000..9168e11933
+--- /dev/null
++++ b/tools/boot/image-fit.c
+@@ -0,0 +1 @@
++#include <../boot/image-fit.c>
+diff --git a/tools/boot/image-host.c b/tools/boot/image-host.c
+new file mode 100644
+index 0000000000..fb0ad56881
+--- /dev/null
++++ b/tools/boot/image-host.c
+@@ -0,0 +1 @@
++#include <../boot/image-host.c>
+diff --git a/tools/boot/image.c b/tools/boot/image.c
+new file mode 100644
+index 0000000000..48a2e765d7
+--- /dev/null
++++ b/tools/boot/image.c
+@@ -0,0 +1 @@
++#include <../boot/image.c>
