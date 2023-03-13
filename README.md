@@ -1,20 +1,20 @@
-# SAM9x60 Hobby board patch based on Linux4sam 2022.07
+# SAM9x60 Hobby board patch based on Linux4sam 2022.10
 Here is the build process.<br>
 All are done in Ubuntu<br>
 
-$ git clone https://github.com/linux4sam/buildroot-at91.git -b sam9x60-curiosity-2022.07<br>
-$ git clone https://github.com/linux4sam/buildroot-external-microchip.git -b sam9x60-curiosity-2022.07<br>
+$ git clone https://github.com/linux4sam/buildroot-at91.git -b linux4sam-2022.10<br>
+$ git clone https://github.com/linux4microchip/buildroot-external-microchip.git -b linux4microchip-2022.10<br>
 
-Create patch folder in buildroot-external-microchip<br>
-$ mkdir -p buildroot-external-microchip/patches/linux<br>
+Apply patch for buildroot<br>
+$ cd buildroot-external-microchip<br>
+$ git apply 0000_sam9x60_hobby_buildroot_external.patch<br>
 
-Copy patch file to buildroot-external-microchip/patches/linux<br>
-
-$ cd buildroot-at91<br>
-$ BR2_EXTERNAL=../buildroot-external-microchip make sam9x60_curiosity_graphics_defconfig<br>
+Build buildroot for hobby board
+$ cd ../buildroot-at91<br>
+$ BR2_EXTERNAL=../buildroot-external-microchip make sam9x60_hobby_graphics_defconfig<br>
 $ make<br>
 
 Have fun!<br>
 
 
-Patrick Lin @ Taipei, 2022/Aug<br>
+Patrick Lin @ Taipei, 2023/Mar<br>
