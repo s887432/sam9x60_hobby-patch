@@ -1,0 +1,113 @@
+diff --git a/Kconfig b/Kconfig
+index b9276158..357ec429 100644
+--- a/Kconfig
++++ b/Kconfig
+@@ -403,6 +403,9 @@ config BOARD_QUIRK_SAMA7G5_EK
+ config BOARD_QUIRK_SAM9X60_CURIOSITY
+         bool "Quirks for SAM9X60_CURIOSITY board"
+ 
++config BOARD_QUIRK_SAM9X60_HOBBY
++        bool "Quirks for SAM9X60_HOBBY board"
++        
+ config BOARD_QUIRK_SAM9X75_EB
+ 	bool "Quirks for SAM9X75_EB board"
+ 	help
+diff --git a/configs/sam9x60_hobby_uboot_defconfig b/configs/sam9x60_hobby_uboot_defconfig
+new file mode 100644
+index 00000000..ee5765f0
+--- /dev/null
++++ b/configs/sam9x60_hobby_uboot_defconfig
+@@ -0,0 +1,18 @@
++CONFIG_SAM9X60=y
++CONFIG_DEBUG=y
++CONFIG_LOAD_HW_INFO=y
++CONFIG_DDRC=y
++CONFIG_DDR_SET_BY_DEVICE=y
++CONFIG_DDR_W971GG6SB=y
++CONFIG_SDCARD=y
++CONFIG_THUMB=y
++CONFIG_BOARD_QUIRK_SAM9X60_HOBBY=y
++CONFIG_LED_ON_BOARD=y
++CONFIG_LED_R_ON_PIOD=y
++CONFIG_LED_R_PIN=17
++CONFIG_LED_G_ON_PIOD=y
++CONFIG_LED_G_PIN=19
++CONFIG_LED_B_ON_PIOD=y
++CONFIG_LED_B_PIN=21
++CONFIG_LOAD_EEPROM=y
++CONFIG_EEPROM_ADDR=0x53
+diff --git a/device/sam9x60/sam9x60.c b/device/sam9x60/sam9x60.c
+index c432a38a..6b7023f9 100644
+--- a/device/sam9x60/sam9x60.c
++++ b/device/sam9x60/sam9x60.c
+@@ -381,7 +381,7 @@ void at91_sdhc_hw_init(void)
+ {
+ #ifdef CONFIG_SDHC0
+ 	const struct pio_desc sdmmc_pins[] = {
+-#if defined(CONFIG_BOARD_QUIRK_SAM9X60_EK) || defined(CONFIG_BOARD_QUIRK_SAM9X60_CURIOSITY)
++#if defined(CONFIG_BOARD_QUIRK_SAM9X60_EK) || defined(CONFIG_BOARD_QUIRK_SAM9X60_CURIOSITY) || defined(CONFIG_BOARD_QUIRK_SAM9X60_HOBBY)
+ 		{"SDMMC0_CMD",	AT91C_PIN_PA(16), 0, PIO_DRVSTR_HI | PIO_SLEWR_CTRL, PIO_PERIPH_A},
+ 		{"SDMMC0_CK",	AT91C_PIN_PA(17), 0, PIO_DRVSTR_HI | PIO_SLEWR_CTRL, PIO_PERIPH_A},
+ 		{"SDMMC0_DAT0",	AT91C_PIN_PA(15), 0, PIO_DRVSTR_HI | PIO_SLEWR_CTRL, PIO_PERIPH_A},
+@@ -402,7 +402,7 @@ void at91_sdhc_hw_init(void)
+ 
+ #ifdef CONFIG_SDHC1
+ 	const struct pio_desc sdmmc_pins[] = {
+-#if defined(CONFIG_BOARD_QUIRK_SAM9X60_EK) || defined(CONFIG_BOARD_QUIRK_SAM9X60_CURIOSITY)
++#if defined(CONFIG_BOARD_QUIRK_SAM9X60_EK) || defined(CONFIG_BOARD_QUIRK_SAM9X60_CURIOSITY) || defined(CONFIG_BOARD_QUIRK_SAM9X60_HOBBY)
+ 		{"SDMMC1_CMD",	AT91C_PIN_PA(12), 0, PIO_DRVSTR_HI | PIO_SLEWR_CTRL, PIO_PERIPH_B},
+ 		{"SDMMC1_CK",	AT91C_PIN_PA(13), 0, PIO_DRVSTR_HI | PIO_SLEWR_CTRL, PIO_PERIPH_B},
+ 		{"SDMMC1_DAT0",	AT91C_PIN_PA(11), 0, PIO_DRVSTR_HI | PIO_SLEWR_CTRL, PIO_PERIPH_B},
+diff --git a/driver/board_hw_info.c b/driver/board_hw_info.c
+index 845f43ed..6a6768c7 100644
+--- a/driver/board_hw_info.c
++++ b/driver/board_hw_info.c
+@@ -98,6 +98,7 @@ static struct {
+ 	{"SAMA5D2-ICP", BOARD_TYPE_EK,	BOARD_ID_SAMA5D2_ICP},
+ 	{"SAM9X60-EK",	BOARD_TYPE_EK,	BOARD_ID_SAM9X60_EK},
+ 	{"SAM9X60-CURIOSITY",  BOARD_TYPE_EK,  BOARD_ID_SAM9X60_CURIOSITY},
++	{"SAM9X60-HOBBY",  BOARD_TYPE_EK,  BOARD_ID_SAM9X60_HOBBY},
+ 	{"SAM9X75-EB",	BOARD_TYPE_EK,	BOARD_ID_SAM9X75_EB},
+ 	{0,		0,		0},
+ };
+@@ -461,6 +462,11 @@ static unsigned int set_default_sn(void)
+          */
+         board_id_ek = BOARD_ID_SAM9X60_CURIOSITY;
+         vendor_ek = VENDOR_MCHIP_RDC;
++#elif defined(CONFIG_BOARD_QUIRK_SAM9X60_HOBBY)
++        /* sam9x60_hobby ; with display module
++         */
++        board_id_ek = BOARD_ID_SAM9X60_HOBBY;
++        vendor_ek = VENDOR_MCHIP_RDC;
+ #elif defined(CONFIG_BOARD_QUIRK_SAM9X75_EB)
+ 	board_id_ek = BOARD_ID_SAM9X75_EB;
+ 	vendor_ek = VENDOR_MCHIP_RDC;
+@@ -520,13 +526,15 @@ static unsigned int set_default_rev(void)
+ 	rev_id_ek = '1';
+ #elif defined(CONFIG_BOARD_QUIRK_SAM9X60_EK) || \
+ 	  defined(CONFIG_BOARD_QUIRK_SAM9X60_EB) || \
+-            defined(CONFIG_BOARD_QUIRK_SAM9X60_CURIOSITY)
++            defined(CONFIG_BOARD_QUIRK_SAM9X60_CURIOSITY) || \
++             defined(CONFIG_BOARD_QUIRK_SAM9X60_HOBBY)
+ 	rev_cm = 'A';
+ 	rev_dm = 'A';
+ 	rev_ek = 'A';
+ 	rev_id_cm = '0';
+ 	rev_id_dm = '0';
+ 	rev_id_ek = '0';
++
+ #elif defined(CONFIG_BOARD_QUIRK_SAM9X75_EB)
+ 	rev_cm = 'A';
+ 	rev_dm = 'A';
+diff --git a/include/board_hw_info.h b/include/board_hw_info.h
+index eb08e453..37d55c51 100644
+--- a/include/board_hw_info.h
++++ b/include/board_hw_info.h
+@@ -32,6 +32,7 @@
+ #define	BOARD_ID_SAM9X60_EK	    21
+ #define BOARD_ID_SAM9X60_CURIOSITY  22
+ #define	BOARD_ID_SAM9X75_EB	    23
++#define BOARD_ID_SAM9X60_HOBBY  24
+ 
+ /* Vendor id definition */
+ #define VENDOR_EMBEST		1
