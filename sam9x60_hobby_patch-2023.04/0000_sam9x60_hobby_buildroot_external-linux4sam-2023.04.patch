@@ -1415,7 +1415,7 @@ index 0000000..be33f10
 + config BOARD_QUIRK_SAM9X75_EB
 + 	bool "Quirks for SAM9X75_EB board"
 + 	help
-+diff --git a/configs/sam9x60_hobby_uboot_defconfig b/configs/sam9x60_hobby_uboot_defconfig
++diff --git a/configs/sam9x60_hobby_uboot_defconfig b/configs/sam9x60_hobby_ubootsd_defconfig
 +new file mode 100644
 +index 00000000..ee5765f0
 +--- /dev/null
